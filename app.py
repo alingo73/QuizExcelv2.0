@@ -61,7 +61,7 @@ quiz = [
         "domanda": "Come si sposta un contenuto già selezionato da un foglio di lavoro ad un altro? a partire dalla cella D6.",
         "opzioni": ["Taglia e incolla su Foglio 1 in D6", "Copia e incolla su Foglio 1 in D6", "Sposta e incolla su Foglio 1 in D6", "Duplica e incolla su Foglio 1 in D6"],
         "risposta_corretta": "Taglia e incolla su Foglio 1 in D6",
-        "gif": "SPOSTACELLE.gif"
+        "gif": "spostacelle.gif"
         
     },
     {
