@@ -184,7 +184,7 @@ quiz = [
         "domanda": "Inserisci il bordo inferiore alle celle selezionate.",
         "opzioni": ["Vai su 'Inserisci', poi 'Bordo inferiore'", "Vai su 'Home', poi 'Bordo inferiore'", "Vai su 'Formato', poi 'Bordo inferiore'", "Vai su 'Visualizza', poi 'Bordo inferiore'"],
         "risposta_corretta": "Vai su 'Home', poi 'Bordo inferiore'",
-        "gif": "bordoinf.gif"
+        "gif": "static\gif\bordoinf.gif"
     },
     {
         "tipo": "excel",
@@ -219,7 +219,7 @@ quiz = [
         "domanda": "Utilizza l’apposito pulsante per fa apparire a sinistra nell’intestazione, il nome del file.",
         "opzioni": ["Vai su 'Inserisci', poi 'Nome File'", "Vai su 'Home', poi 'Nome File'", "'Vai su Inserisci - Intestazione e piè di pagina e si sceglie l'icona Excel nettendolo alla sinistra del foglio'", "Vai su 'Visualizza', poi 'Nome File'"],
         "risposta_corretta": "Vai su Inserisci - Intestazione e piè di pagina e si sceglie l'icona Excel nettendolo alla sinistra del foglio",
-        "gif": "nomefile.gif"
+        "gif": "static\gif\nomefile.gif"
     },
     {
         "tipo": "multiple_choice",
