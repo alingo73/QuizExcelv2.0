@@ -1,6 +1,7 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, session, render_template, request, redirect, url_for
 
+app.secret_key = 'Nandiolone'
 
 app = Flask(__name__)
 
