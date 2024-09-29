@@ -1,35 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Excel</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Quiz</title>
 </head>
 <body>
-    <h1>Quiz Excel</h1>
+    <h1>Quiz di Excel</h1>
     <form method="POST">
-        {% for domanda in quiz %}
-            <div>
-                <h3>{{ domanda.domanda }}</h3>
-                {% if domanda.tipo == 'multiple_choice' %}
-                    {% for opzione in domanda.opzioni %}
-                        <label>
-                            <input type="radio" name="{{ domanda.domanda }}" value="{{ opzione }}">
-                            {{ opzione }}
-                        </label><br>
-                    {% endfor %}
-                {% elif domanda.tipo == 'excel' %}
-                    <label>
-                        Risposta: <input type="text" name="{{ domanda.domanda }}">
-                    </label>
-                {% endif %}
-                {% if 'gif' in domanda %}
-                    <img src="{{ url_for('static', filename=domanda.gif) }}" alt="GIF di supporto">
-                {% endif %}
-            </div>
-        {% endfor %}
-        <button type="submit">Invia Risposte</button>
+        <p>{{ domanda }}</p>
+        {% if tipo == 'multiple_choice' %}
+            {% for opzione in opzioni %}
+                <input type="radio" name="risposta" value="{{ opzione }}" required>{{ opzione }}<br>
+            {% endfor %}
+        {% elif tipo == 'excel' %}
+            <input type="text" name="risposta" required>
+        {% endif %}
+        <button type="submit">Invia risposta</button>
     </form>
 </body>
 </html>

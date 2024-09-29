@@ -1,19 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Domanda {{ numero + 1 }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Domanda</title>
 </head>
 <body>
     <h1>Domanda {{ numero + 1 }}</h1>
     <form method="POST">
-        <h3>{{ domanda }}</h3>
-        <label>
-            Risposta: <input type="text" name="answer">
-        </label>
-        <button type="submit">Invia Risposta</button>
+        <p>{{ domanda['domanda'] }}</p>
+        {% if domanda['tipo'] == 'multiple_choice' %}
+            {% for opzione in domanda['opzioni'] %}
+                <input type="radio" name="risposta" value="{{ opzione }}" required>{{ opzione }}<br>
+            {% endfor %}
+        {% elif domanda['tipo'] == 'excel' %}
+            <input type="text" name="risposta" required>
+        {% endif %}
+        <button type="submit">Invia risposta</button>
     </form>
 </body>
 </html>

@@ -245,44 +245,35 @@ quiz = [
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':
-        risposte = request.form
-        risultati = []
-
-        for domanda in quiz:
-            risposta_utente = risposte.get(domanda['domanda'])
-            if risposta_utente == domanda['risposta_corretta']:
-                risultati.append({'domanda': domanda['domanda'], 'risposta_corretta': True})
-            else:
-                risultati.append({'domanda': domanda['domanda'], 'risposta_corretta': False})
-
-        return render_template('risultati.html', risultati=risultati)
-
-    return render_template('quiz.html', quiz=quiz)
+    session['risposte'] = []  # Resetta le risposte ad ogni inizio quiz
+    return redirect(url_for('domanda', num=0))
 
 @app.route('/domanda/<int:num>', methods=['GET', 'POST'])
 def domanda(num):
-    # Inizializza la chiave 'risposte' se non esiste
-    if 'risposte' not in session:
-        session['risposte'] = []
+    if num < len(quiz):
+        domanda_corrente = quiz[num]
 
-    # Assicurati di avere una domanda valida
-    if num < 0 or num >= len(quiz_questions):
-        return redirect(url_for('results'))
+        if request.method == 'POST':
+            risposta_utente = request.form.get('risposta')
+            session['risposte'].append({'domanda': domanda_corrente['domanda'], 'risposta': risposta_utente})
 
-    domanda_corrente = quiz_questions[num]
+            return redirect(url_for('domanda', num=num + 1))
 
-    if request.method == 'POST':
-        risposta_utente = request.form.get('answer')
-        # Aggiungi la risposta alla sessione
-        session['risposte'].append({'domanda': domanda_corrente['question'], 'risposta_utente': risposta_utente})
+        return render_template('domanda.html', domanda=domanda_corrente, numero=num)
+    
+    return redirect(url_for('risultati'))
 
-        # Passa alla prossima domanda
-        return redirect(url_for('domanda', num=num + 1))
-
-    # Mostra la domanda corrente
-    return render_template('domanda.html', domanda=domanda_corrente['question'], numero=num)
-
+@app.route('/risultati', methods=['GET'])
+def risultati():
+    risultati = []
+    for idx, domanda in enumerate(quiz):
+        risposta_utente = session['risposte'][idx]['risposta']
+        if risposta_utente == domanda['risposta_corretta']:
+            risultati.append({'domanda': domanda['domanda'], 'risposta_corretta': True})
+        else:
+            risultati.append({'domanda': domanda['domanda'], 'risposta_corretta': False})
+    
+    return render_template('risultati.html', risultati=risultati)
 
 if __name__ == '__main__':
     app.run(debug=True)
