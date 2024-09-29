@@ -3,26 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Risultati Quiz</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Risultati</title>
 </head>
 <body>
     <div class="container">
-        <h1>Risultati del Quiz</h1>
-        {% for risultato in risultati %}
-            <div class="question-result">
-                <h3>{{ risultato['domanda']['domanda'] }}</h3>
-                {% if risultato['risposta_corretta'] %}
-                    <p>Risposta corretta! 🎉</p>
-                {% else %}
-                    <p>Risposta errata. 😢</p>
-                {% endif %}
-                {% if 'gif' in risultato['domanda'] %}
-                    <img src="{{ url_for('static', filename='images/' + risultato['domanda']['gif']) }}" alt="GIF esplicativa">
-                {% endif %}
-            </div>
-        {% endfor %}
-        <a href="/">Ricomincia il quiz</a>
+        <h1>{{ domanda.domanda }}</h1>
+        {% if risposta_corretta %}
+            <p>Risposta corretta!</p>
+        {% else %}
+            <p>Risposta sbagliata. La risposta corretta è: {{ domanda.risposta_corretta }}</p>
+        {% endif %}
+        {% if gif %}
+            <img src="{{ url_for('static', filename=gif) }}" alt="Gif">
+        {% endif %}
+        <a href="{{ url_for('next', domanda_id=request.form['domanda_id']) }}">Prossima domanda</a>
     </div>
 </body>
 </html>

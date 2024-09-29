@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Quiz</title>
 </head>
 <body>
-    <h1>Quiz</h1>
-    <form method="POST" action="/quiz">
-        {% for domanda in quiz %}
-            <h2>{{ domanda.domanda }}</h2>
-            {% if domanda.gif %}
-                <img src="{{ url_for('static', filename=domanda.gif) }}" alt="GIF">
-            {% endif %}
+    <div class="container">
+        <h1>{{ domanda.domanda }}</h1>
+        <form method="POST">
+            <input type="hidden" name="domanda_id" value="{{ domanda_id }}">
             {% for opzione in domanda.opzioni %}
-                <input type="radio" name="answer{{ loop.index }}" value="{{ opzione }}">
-                <label>{{ opzione }}</label><br>
+                <div>
+                    <input type="radio" name="risposta" value="{{ opzione }}" required>
+                    <label>{{ opzione }}</label>
+                </div>
             {% endfor %}
-        {% endfor %}
-        <input type="submit" value="Invia risposte">
-    </form>
+            <button type="submit">Invia risposta</button>
+        </form>
+    </div>
 </body>
 </html>
-
