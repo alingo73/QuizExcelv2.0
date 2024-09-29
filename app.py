@@ -1,9 +1,13 @@
 import os
 from flask import Flask, session, render_template, request, redirect, url_for
 
+
+# Crea l'istanza di Flask
+app = Flask(__name__)
+
 app.secret_key = 'Nandiolone'
 
-app = Flask(__name__)
+
 
 quiz = [
     
