@@ -17,7 +17,7 @@
         {% if gif %}
             <img src="{{ url_for('static', filename=gif) }}" alt="Gif">
         {% endif %}
-        <a href="{{ url_for('next', domanda_id=request.form['domanda_id']) }}">Prossima domanda</a>
+        <a href="{{ url_for('next', domanda_id=domanda_id) }}">Prossima domanda</a>
     </div>
 </body>
 </html>

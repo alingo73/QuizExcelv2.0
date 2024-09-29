@@ -251,7 +251,8 @@ def index():
 
         return render_template('risultati.html', risposta_corretta=risposta_corretta, 
                                domanda=quiz[domanda_id], 
-                               gif=quiz[domanda_id].get('gif'))
+                               gif=quiz[domanda_id].get('gif'), 
+                               domanda_id=domanda_id)
 
     return render_template('quiz.html', domanda=quiz[0], domanda_id=0)
 
