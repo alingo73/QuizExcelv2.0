@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+    background: url("../images/sfainew.jpg") no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    margin: 50px auto;
+    max-width: 600px;
+    border-radius: 8px;
+}
+
+h1 {
+    text-align: center;
+    color: #ffcc00;
+}
+
+.question-block {
+    margin-bottom: 20px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #ffcc00;
+    border: none;
+    color: #000;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #ff9900;
+}
+
+.question-result {
+    margin-bottom: 20px;
+}

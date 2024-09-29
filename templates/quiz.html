@@ -3,45 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Excel</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Quiz</title>
 </head>
 <body>
-    <div class="container">
-        <h1>{{ question['domanda'] }}</h1>
-        
-        {% if question['tipo'] == 'excel' %}
-            <form method="POST">
-                <input type="text" name="answer" placeholder="Inserisci la formula">
-                <button type="submit">Conferma</button>
-            </form>
-        {% elif question['tipo'] == 'multiple_choice' %}
-            <form method="POST">
-                {% for opzione in question['opzioni'] %}
-                    <label>
-                        <input type="radio" name="answer" value="{{ opzione }}">
-                        {{ opzione }}
-                    </label><br>
-                {% endfor %}
-                <button type="submit">Conferma</button>
-            </form>
-        {% endif %}
-        
-        <!-- Feedback per la risposta -->
-        {% if feedback %}
-            <p>{{ feedback }}</p>
-        {% endif %}
-        
-        <!-- Mostra GIF se esiste -->
-        {% if gif_path %}
-            <img src="{{ url_for('static', filename=gif_path.split('static/')[-1]) }}" alt="GIF">
-        {% endif %}
-        
-        <!-- Navigazione -->
-        <div>
-            <a href="{{ url_for('prev_question') }}">Indietro</a>
-            <a href="{{ url_for('next_question') }}">Avanti</a>
-        </div>
-    </div>
+    <h1>Quiz</h1>
+    <form method="POST" action="/quiz">
+        {% for domanda in quiz %}
+            <h2>{{ domanda.domanda }}</h2>
+            {% if domanda.gif %}
+                <img src="{{ url_for('static', filename=domanda.gif) }}" alt="GIF">
+            {% endif %}
+            {% for opzione in domanda.opzioni %}
+                <input type="radio" name="answer{{ loop.index }}" value="{{ opzione }}">
+                <label>{{ opzione }}</label><br>
+            {% endfor %}
+        {% endfor %}
+        <input type="submit" value="Invia risposte">
+    </form>
 </body>
 </html>
+

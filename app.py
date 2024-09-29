@@ -3,7 +3,6 @@ from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
-# Esempio di domande per il quiz
 quiz = [
     
       
@@ -61,7 +60,7 @@ quiz = [
         "domanda": "Come si sposta un contenuto già selezionato da un foglio di lavoro ad un altro? a partire dalla cella D6.",
         "opzioni": ["Taglia e incolla su Foglio 1 in D6", "Copia e incolla su Foglio 1 in D6", "Sposta e incolla su Foglio 1 in D6", "Duplica e incolla su Foglio 1 in D6"],
         "risposta_corretta": "Taglia e incolla su Foglio 1 in D6",
-        "gif": "spostacelle.gif"
+        "gif": "SPOSTACELLE.gif"
         
     },
     {
@@ -184,7 +183,7 @@ quiz = [
         "domanda": "Inserisci il bordo inferiore alle celle selezionate.",
         "opzioni": ["Vai su 'Inserisci', poi 'Bordo inferiore'", "Vai su 'Home', poi 'Bordo inferiore'", "Vai su 'Formato', poi 'Bordo inferiore'", "Vai su 'Visualizza', poi 'Bordo inferiore'"],
         "risposta_corretta": "Vai su 'Home', poi 'Bordo inferiore'",
-        "gif": "static\gif\bordoinf.gif"
+        "gif": "bordoinf.gif"
     },
     {
         "tipo": "excel",
@@ -219,7 +218,7 @@ quiz = [
         "domanda": "Utilizza l’apposito pulsante per fa apparire a sinistra nell’intestazione, il nome del file.",
         "opzioni": ["Vai su 'Inserisci', poi 'Nome File'", "Vai su 'Home', poi 'Nome File'", "'Vai su Inserisci - Intestazione e piè di pagina e si sceglie l'icona Excel nettendolo alla sinistra del foglio'", "Vai su 'Visualizza', poi 'Nome File'"],
         "risposta_corretta": "Vai su Inserisci - Intestazione e piè di pagina e si sceglie l'icona Excel nettendolo alla sinistra del foglio",
-        "gif": "static\gif\nomefile.gif"
+        "gif": "nomefile.gif"
     },
     {
         "tipo": "multiple_choice",
@@ -236,66 +235,24 @@ quiz = [
     }
 ]
 
-# Variabili per tracciare lo stato
-current_index = 0
-user_responses = [None] * len(quiz)
 
-@app.route('/')
-def home():
-    return redirect(url_for('quiz_question', index=0))
 
-@app.route('/quiz/<int:index>', methods=['GET', 'POST'])
-def quiz_question(index):
-    global current_index
-    current_index = index
-    question = quiz[index]
-    feedback = None
-    gif_path = None
-    
+@app.route('/', methods=['GET', 'POST'])
+def index():
     if request.method == 'POST':
-        user_answer = request.form.get('answer')
+        risposte = request.form
+        risultati = []
         
-        if question['tipo'] == 'excel':
-            user_answer_normalized = user_answer.replace(" ", "").upper()
-            correct = any(user_answer_normalized == ans.replace(" ", "").upper() for ans in question['risposte_possibili'])
-        elif question['tipo'] == 'multiple_choice':
-            correct = user_answer == question['risposta_corretta']
+        for domanda in quiz:
+            risposta_utente = risposte.get(domanda['domanda'])
+            if risposta_utente == domanda['risposta_corretta'].lower():
+                risultati.append({'domanda': domanda, 'risposta_corretta': True})
+            else:
+                risultati.append({'domanda': domanda, 'risposta_corretta': False})
         
-        # Salva la risposta dell'utente
-        user_responses[index] = 1 if correct else 0
+        return render_template('risultati.html', risultati=risultati)
 
-        # Feedback e visualizzazione della GIF
-        if correct:
-            feedback = "Corretto!"
-        else:
-            feedback = "Sbagliato!"
-        
-        # Mostra la GIF della domanda corrente
-        gif_path = question.get('gif')
+    return render_template('quiz.html', quiz=quiz)
 
-    return render_template(
-        'quiz.html',
-        question=question,
-        index=index,
-        total=len(quiz),
-        feedback=feedback,
-        gif_path=gif_path
-    )
-
-@app.route('/next')
-def next_question():
-    global current_index
-    if current_index < len(quiz) - 1:
-        current_index += 1
-    return redirect(url_for('quiz_question', index=current_index))
-
-@app.route('/prev')
-def prev_question():
-    global current_index
-    if current_index > 0:
-        current_index -= 1
-    return redirect(url_for('quiz_question', index=current_index))
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Usa la porta fornita da Heroku
-    app.run(host='0.0.0.0', port=port)  # Assicurati di ascoltare su 0.0.0.0
+if __name__ == '__main__':
+    app.run(debug=True)

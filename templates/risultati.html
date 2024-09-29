@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risultati Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Risultati del Quiz</h1>
+        {% for risultato in risultati %}
+            <div class="question-result">
+                <h3>{{ risultato['domanda']['domanda'] }}</h3>
+                {% if risultato['risposta_corretta'] %}
+                    <p>Risposta corretta! 🎉</p>
+                {% else %}
+                    <p>Risposta errata. 😢</p>
+                {% endif %}
+                {% if 'gif' in risultato['domanda'] %}
+                    <img src="{{ url_for('static', filename='images/' + risultato['domanda']['gif']) }}" alt="GIF esplicativa">
+                {% endif %}
+            </div>
+        {% endfor %}
+        <a href="/">Ricomincia il quiz</a>
+    </div>
+</body>
+</html>
