@@ -266,14 +266,20 @@ def domanda(num):
 @app.route('/risultati', methods=['GET'])
 def risultati():
     risultati = []
-    for idx, domanda in enumerate(quiz):
-        risposta_utente = session['risposte'][idx]['risposta']
-        if risposta_utente == domanda['risposta_corretta']:
-            risultati.append({'domanda': domanda['domanda'], 'risposta_corretta': True})
-        else:
-            risultati.append({'domanda': domanda['domanda'], 'risposta_corretta': False})
+    risposte_memorizzate = session.get('risposte', [])
     
+    for idx, domanda in enumerate(quiz):
+        if idx < len(risposte_memorizzate):
+            risposta_utente = risposte_memorizzate[idx]['risposta']
+            if risposta_utente == domanda['risposta_corretta']:
+                risultati.append({'domanda': domanda['domanda'], 'risposta_corretta': True})
+            else:
+                risultati.append({'domanda': domanda['domanda'], 'risposta_corretta': False})
+        else:
+            risultati.append({'domanda': domanda['domanda'], 'risposta_corretta': False})  # O gestisci diversamente
+
     return render_template('risultati.html', risultati=risultati)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
