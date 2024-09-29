@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
+
 
 app = Flask(__name__)
 
@@ -257,12 +258,18 @@ def index():
 @app.route('/domanda/<int:numero>', methods=['GET', 'POST'])
 def domanda(numero):
     if numero >= len(quiz):
-        return redirect(url_for('index'))
+        return redirect(url_for('risultati'))
 
+    domanda_corrente = quiz[numero]
+    
     if request.method == 'POST':
-        return redirect(url_for('domanda', numero=numero + 1))
+        risposta_utente = request.form.get('risposta')
+        session['risposte'].append({'domanda': domanda_corrente['domanda'], 'risposta_utente': risposta_utente})
 
-    return render_template('domanda.html', domanda=quiz[numero], numero=numero)
+        # Passa alla prossima domanda
+        return redirect(url_for('domanda', numero=numero + 1))
+    
+    return render_template('domanda.html', domanda=domanda_corrente, numero=numero)
 
 if __name__ == '__main__':
     app.run(debug=True)
