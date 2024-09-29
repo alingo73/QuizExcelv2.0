@@ -260,21 +260,29 @@ def index():
 
     return render_template('quiz.html', quiz=quiz)
 
-@app.route('/domanda/<int:numero>', methods=['GET', 'POST'])
-def domanda(numero):
-    if numero >= len(quiz):
-        return redirect(url_for('risultati'))
+@app.route('/domanda/<int:num>', methods=['GET', 'POST'])
+def domanda(num):
+    # Inizializza la chiave 'risposte' se non esiste
+    if 'risposte' not in session:
+        session['risposte'] = []
 
-    domanda_corrente = quiz[numero]
-    
+    # Assicurati di avere una domanda valida
+    if num < 0 or num >= len(quiz_questions):
+        return redirect(url_for('results'))
+
+    domanda_corrente = quiz_questions[num]
+
     if request.method == 'POST':
-        risposta_utente = request.form.get('risposta')
-        session['risposte'].append({'domanda': domanda_corrente['domanda'], 'risposta_utente': risposta_utente})
+        risposta_utente = request.form.get('answer')
+        # Aggiungi la risposta alla sessione
+        session['risposte'].append({'domanda': domanda_corrente['question'], 'risposta_utente': risposta_utente})
 
         # Passa alla prossima domanda
-        return redirect(url_for('domanda', numero=numero + 1))
-    
-    return render_template('domanda.html', domanda=domanda_corrente, numero=numero)
+        return redirect(url_for('domanda', num=num + 1))
+
+    # Mostra la domanda corrente
+    return render_template('domanda.html', domanda=domanda_corrente['question'], numero=num)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
