@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Risultati</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="quiz-container">
+    <div class="container">
         <h1>Risultati del Quiz</h1>
         <ul>
             {% for risultato in risultati %}
                 <li>
-                    {{ risultato.domanda }} - 
-                    {% if risultato.risposta_corretta %}
-                        <span style="color: green;">Corretto!</span>
+                    {{ risultato['domanda'] }}: 
+                    {% if risultato['risposta_corretta'] %}
+                        <span style="color: green;">Corretta</span>
                     {% else %}
-                        <span style="color: red;">Sbagliato!</span>
+                        <span style="color: red;">Sbagliata</span>
                     {% endif %}
                 </li>
             {% endfor %}
         </ul>
-        <a href="/">Torna al quiz</a>
+        <a href="{{ url_for('index') }}">Ricomincia il Quiz</a>
     </div>
 </body>
 </html>

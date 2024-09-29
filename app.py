@@ -242,17 +242,27 @@ def index():
     if request.method == 'POST':
         risposte = request.form
         risultati = []
-        
+
         for domanda in quiz:
             risposta_utente = risposte.get(domanda['domanda'])
             if risposta_utente == domanda['risposta_corretta']:
                 risultati.append({'domanda': domanda['domanda'], 'risposta_corretta': True})
             else:
                 risultati.append({'domanda': domanda['domanda'], 'risposta_corretta': False})
-        
+
         return render_template('risultati.html', risultati=risultati)
 
     return render_template('quiz.html', quiz=quiz)
+
+@app.route('/domanda/<int:numero>', methods=['GET', 'POST'])
+def domanda(numero):
+    if numero >= len(quiz):
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        return redirect(url_for('domanda', numero=numero + 1))
+
+    return render_template('domanda.html', domanda=quiz[numero], numero=numero)
 
 if __name__ == '__main__':
     app.run(debug=True)
