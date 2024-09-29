@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>{{ domanda.domanda }}</h1>
+    <div class="quiz-container">
+        <h1>Quiz di Excel</h1>
         <form method="POST">
-            <input type="hidden" name="domanda_id" value="{{ domanda_id }}">
-            {% for opzione in domanda.opzioni %}
-                <div>
-                    <input type="radio" name="risposta" value="{{ opzione }}" required>
-                    <label>{{ opzione }}</label>
-                </div>
+            {% for domanda in quiz %}
+                <h2>{{ domanda.domanda }}</h2>
+                {% for opzione in domanda.opzioni %}
+                    <input type="radio" name="{{ domanda.domanda }}" value="{{ opzione }}" required>
+                    <label>{{ opzione }}</label><br>
+                {% endfor %}
+                <br>
             {% endfor %}
-            <button type="submit">Invia risposta</button>
+            <button type="submit">Invia Risposte</button>
         </form>
     </div>
 </body>

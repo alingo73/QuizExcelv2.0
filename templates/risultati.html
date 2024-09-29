@@ -3,21 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Risultati</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>{{ domanda.domanda }}</h1>
-        {% if risposta_corretta %}
-            <p>Risposta corretta!</p>
-        {% else %}
-            <p>Risposta sbagliata. La risposta corretta è: {{ domanda.risposta_corretta }}</p>
-        {% endif %}
-        {% if gif %}
-            <img src="{{ url_for('static', filename=gif) }}" alt="Gif">
-        {% endif %}
-        <a href="{{ url_for('next', domanda_id=domanda_id) }}">Prossima domanda</a>
+    <div class="quiz-container">
+        <h1>Risultati del Quiz</h1>
+        <ul>
+            {% for risultato in risultati %}
+                <li>
+                    {{ risultato.domanda }} - 
+                    {% if risultato.risposta_corretta %}
+                        <span style="color: green;">Corretto!</span>
+                    {% else %}
+                        <span style="color: red;">Sbagliato!</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="/">Torna al quiz</a>
     </div>
 </body>
 </html>

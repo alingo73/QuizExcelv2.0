@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -240,28 +240,19 @@ quiz = [
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        domanda_id = int(request.form['domanda_id'])
-        risposta_utente = request.form['risposta']
+        risposte = request.form
+        risultati = []
+        
+        for domanda in quiz:
+            risposta_utente = risposte.get(domanda['domanda'])
+            if risposta_utente == domanda['risposta_corretta']:
+                risultati.append({'domanda': domanda['domanda'], 'risposta_corretta': True})
+            else:
+                risultati.append({'domanda': domanda['domanda'], 'risposta_corretta': False})
+        
+        return render_template('risultati.html', risultati=risultati)
 
-        # Controlla se la risposta è corretta
-        if risposta_utente == quiz[domanda_id]['risposta_corretta']:
-            risposta_corretta = True
-        else:
-            risposta_corretta = False
-
-        return render_template('risultati.html', risposta_corretta=risposta_corretta, 
-                               domanda=quiz[domanda_id], 
-                               gif=quiz[domanda_id].get('gif'), 
-                               domanda_id=domanda_id)
-
-    return render_template('quiz.html', domanda=quiz[0], domanda_id=0)
-
-@app.route('/next/<int:domanda_id>', methods=['GET'])
-def next(domanda_id):
-    if domanda_id + 1 < len(quiz):
-        return render_template('quiz.html', domanda=quiz[domanda_id + 1], domanda_id=domanda_id + 1)
-    else:
-        return redirect(url_for('index'))
+    return render_template('quiz.html', quiz=quiz)
 
 if __name__ == '__main__':
     app.run(debug=True)
