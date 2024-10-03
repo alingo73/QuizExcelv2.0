@@ -1,23 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Domanda {{ q_id }}</title>
+    <title>Quiz Domanda</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h2>{{ domanda['question'] }}</h2>
-    <form method="post">
-        {% if domanda['type'] == 'multiple_choice' %}
-            {% for option in domanda['options'] %}
-                <input type="radio" id="option{{ loop.index }}" name="answer" value="{{ option }}">
-                <label for="option{{ loop.index }}">{{ option }}</label><br>
-            {% endfor %}
-        {% elif domanda['type'] == 'excel' or domanda['type'] == 'open' %}
-            <label for="answer">Answer:</label>
-            <input type="text" id="answer" name="answer"><br>
-        {% endif %}
-        <button type="submit">Submit</button>
-    </form>
+    <div class="question-container">
+        <h2>{{ domanda['question'] }}</h2>
+        <form method="POST">
+            {% if domanda['type'] == 'multiple_choice' %}
+                <div class="options">
+                    {% for idx, option in enumerate(domanda['options']) %}
+                        <label>
+                            <input type="radio" name="answer" value="{{ option }}"> {{ option }}
+                        </label>
+                    {% endfor %}
+                </div>
+            {% elif domanda['type'] == 'open' %}
+                <input type="text" name="answer" placeholder="Inserisci la tua risposta qui" required>
+            {% endif %}
+            <br>
+            <button type="submit">Invia</button>
+        </form>
+    </div>
 </body>
 </html>

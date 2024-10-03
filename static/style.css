@@ -1,46 +1,83 @@
+/* Imposta un'immagine di sfondo */
 body {
-    font-family: Arial, sans-serif;
     background-image: url('../static/sfainew.jpg');
     background-size: cover;
-    color: white;
-}
-
-.container {
-    width: 80%;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.7);
-    border-radius: 10px;
-}
-
-h1, h2 {
-    text-align: center;
-}
-
-.question {
-    margin: 20px 0;
-    font-size: 24px;
-}
-
-.options {
-    list-style: none;
+    margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
 }
 
-.options li {
-    margin: 10px 0;
+/* Centra il contenuto della domanda */
+.question-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.8); /* Sfondino bianco leggermente trasparente */
+    padding: 40px; /* Aumentato padding per distanziare il testo */
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
 }
 
+/* Stile per le opzioni */
+.options {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Allinea le opzioni a sinistra */
+    width: 100%; /* Rende l'opzione larga come il contenitore */
+}
+
+.options label {
+    margin: 10px 0; /* Margine tra le opzioni */
+}
+
+/* Casella di input per le domande aperte */
+input[type="text"] {
+    width: 300px; /* Aumentato per renderla più grande */
+    padding: 10px;
+    margin-top: 20px; /* Margine sopra per distanziare dal testo della domanda */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Stile per il pulsante */
 button {
+    padding: 10px 20px;
     background-color: #4CAF50;
     color: white;
     border: none;
-    padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    margin-top: 20px; /* Margine sopra per distanziare dal contenuto precedente */
 }
 
 button:hover {
     background-color: #45a049;
+}
+
+/* Imposta uno sfondo ombreggiato per la pagina dei risultati */
+.results-container {
+    background-color: rgba(0, 0, 0, 0.8); /* Sfondo nero ombreggiato */
+    color: white; /* Testo bianco per contrasto */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Stile per le risposte corrette */
+.correct {
+    color: green; /* Colore verde per le risposte corrette */
+}
+
+/* Stile per le risposte sbagliate */
+.wrong {
+    color: red; /* Colore rosso per le risposte sbagliate */
+}
+
+/* Centra il contenuto della pagina dei risultati */
+.results-title {
+    text-align: center; /* Testo centrato */
+    margin-bottom: 20px; /* Margine inferiore per distanziare dal contenuto */
 }

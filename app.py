@@ -257,13 +257,6 @@ quiz = [
     {
 	'id':36,
         "type": "multiple_choice",
-        "question": "Copia formato delle celle B2:B6 nella colonna immediatamente successiva a partire da C4.",
-        "options": ["Seleziona B2:B6, copia formato e applica a C4:C8", "Seleziona B2:B6, copia formato e applica a C4:C9", "Seleziona B2:B6, copia formato e applica a C4:C10", "Seleziona B2:B6, copia formato e applica a C4:C7"],
-        "correct": "Seleziona B2:B6, copia formato e applica a C4:C8"
-    },
-    {
-	'id':37,
-        "type": "multiple_choice",
         "question": "Formatta il contenuto della cella selezionata in modo da avere il formato gg-mm-aaaa.",
         "options": ["Vai in impostazione avanzate gruppo numeri e nella finestra Formato Celle scegli 'Data'", "Vai su 'Home', poi 'Data'", "Vai su 'Inserisci', poi 'Data'", "Vai su impostazioni avanzate gruppo Stili e poi scegli il formato 'data'"],
         "correct": "Vai in impostazione avanzate gruppo numeri e nella finestra Formato Celle scegli 'Data'",
@@ -292,14 +285,18 @@ def domanda(q_id):
 
     domanda_attuale = next((q for q in quiz if q['id'] == q_id), None)
     if domanda_attuale:
-        return render_template('domanda.html', domanda=domanda_attuale, q_id=q_id)
+        # Passa 'enumerate' come variabile
+        return render_template('domanda.html', domanda=domanda_attuale, q_id=q_id, enumerate=enumerate)
     else:
         return redirect(url_for('risultati'))
+
 
 @app.route('/risultati')
 def risultati():
     # Confronta le risposte dell'utente con quelle corrette
     risultati_quiz = []
+    correct_count = 0
+
     for q in quiz:
         risposta_utente = user_answers.get(q['id'], '').strip().lower()
         corretta = False
@@ -308,9 +305,11 @@ def risultati():
             corretta = risposta_utente == q['correct'].lower()
             correct_answer = q['correct']
         elif q['type'] == 'open':
-            # Per le risposte aperte, verifica se la risposta è in una delle varianti corrette (case insensitive)
             corretta = risposta_utente in [var.lower() for var in q['correct_variants']]
             correct_answer = ', '.join(q['correct_variants'])
+
+        if corretta:
+            correct_count += 1
 
         risultati_quiz.append({
             'question': q['question'],
@@ -318,7 +317,11 @@ def risultati():
             'correct_answer': correct_answer,
             'is_correct': corretta
         })
-    return render_template('risultati.html', risultati=risultati_quiz)
+
+    total_questions = len(quiz)  # Calcola il numero totale delle domande
+
+    return render_template('risultati.html', risultati=risultati_quiz, correct_count=correct_count, total_questions=total_questions)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
