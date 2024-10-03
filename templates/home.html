@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Benvenuto al Quiz</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Benvenuto al Quiz!</h1>
+        <p>Sei pronto a mettere alla prova le tue conoscenze? Fai clic sul pulsante qui sotto per iniziare il quiz!</p>
+        <a href="{{ url_for('quiz') }}">
+            <button>Inizia il Quiz</button>
+        </a>
+    </div>
+</body>
+</html>

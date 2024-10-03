@@ -1,21 +1,23 @@
-<!doctype html>
-<html lang="it">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Domanda</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domanda {{ q_id }}</title>
 </head>
 <body>
-    <h1>Domanda {{ numero + 1 }}</h1>
-    <form method="POST">
-        <p>{{ domanda['domanda'] }}</p>
-        {% if domanda['tipo'] == 'multiple_choice' %}
-            {% for opzione in domanda['opzioni'] %}
-                <input type="radio" name="risposta" value="{{ opzione }}" required>{{ opzione }}<br>
+    <h2>{{ domanda['question'] }}</h2>
+    <form method="post">
+        {% if domanda['type'] == 'multiple_choice' %}
+            {% for option in domanda['options'] %}
+                <input type="radio" id="option{{ loop.index }}" name="answer" value="{{ option }}">
+                <label for="option{{ loop.index }}">{{ option }}</label><br>
             {% endfor %}
-        {% elif domanda['tipo'] == 'excel' %}
-            <input type="text" name="risposta" required>
+        {% elif domanda['type'] == 'excel' or domanda['type'] == 'open' %}
+            <label for="answer">Answer:</label>
+            <input type="text" id="answer" name="answer"><br>
         {% endif %}
-        <button type="submit">Invia risposta</button>
+        <button type="submit">Submit</button>
     </form>
 </body>
 </html>

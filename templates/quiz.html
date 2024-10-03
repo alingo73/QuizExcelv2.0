@@ -1,21 +1,15 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Quiz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Inizia Quiz</title>
 </head>
 <body>
-    <h1>Quiz di Excel</h1>
-    <form method="POST">
-        <p>{{ domanda }}</p>
-        {% if tipo == 'multiple_choice' %}
-            {% for opzione in opzioni %}
-                <input type="radio" name="risposta" value="{{ opzione }}" required>{{ opzione }}<br>
-            {% endfor %}
-        {% elif tipo == 'excel' %}
-            <input type="text" name="risposta" required>
-        {% endif %}
-        <button type="submit">Invia risposta</button>
+    <h1>Benvenuto al Quiz!</h1>
+    <form action="{{ url_for('start_quiz') }}" method="POST">
+        <button type="submit">Inizia il quiz</button>
     </form>
 </body>
 </html>
