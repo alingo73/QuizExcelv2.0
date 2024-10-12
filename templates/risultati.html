@@ -3,23 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risultati del Quiz</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Risultati</title>
 </head>
 <body>
     <div class="results-container">
         <h1 class="results-title">Risultati del Quiz</h1>
-        <p>Hai ottenuto {{ correct_count }}/{{ total_questions }} corrette.</p>
-        <ul>
-            {% for risultato in risultati %}
-                <li>
-                    <strong>{{ risultato.question }}</strong><br>
-                    La tua risposta: <span class="{{ 'correct' if risultato.is_correct else 'wrong' }}">
-                    {{ risultato.user_answer }}</span><br>
-                    Risposta corretta: <span class="correct">{{ risultato.correct_answer }}</span>
-                </li>
-            {% endfor %}
-        </ul>
+        {% for result in risultati %}
+            <div class="result-item">
+                <p><strong>Domanda:</strong> {{ result.question }}</p>
+                <p><strong>La tua risposta:</strong> {{ result.user_answer }}</p>
+                <p><strong>Risposta corretta:</strong> {{ result.correct_answer }}</p>
+                {% if result.is_correct %}
+                    <p class="correct">Corretto</p>
+                {% else %}
+                    <p class="wrong">Sbagliato</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <p class="score">Punteggio finale: {{ correct_count }} su {{ total_questions }}</p>
     </div>
 </body>
 </html>

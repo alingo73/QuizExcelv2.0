@@ -3,27 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Domanda</title>
+    <title>Domanda</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="question-container">
-        <h2>{{ domanda['question'] }}</h2>
-        <form method="POST">
-            {% if domanda['type'] == 'multiple_choice' %}
-                <div class="options">
-                    {% for idx, option in enumerate(domanda['options']) %}
-                        <label>
-                            <input type="radio" name="answer" value="{{ option }}"> {{ option }}
-                        </label>
-                    {% endfor %}
+    <div class="container">
+        <!-- Aggiungi il controllo per verificare se la domanda esiste -->
+        {% if domanda %}
+            <h1>{{ domanda['question'] }}</h1>
+
+	<form method="POST">
+    		
+    		{% if domanda['type'] == 'multiple_choice' %}
+       		    {% for option in domanda['options'] %}
+            		<input type="radio" name="risposta" value="{{ option }}" id="{{ loop.index }}">
+           	  	<label for="{{ loop.index }}">{{ option }}</label><br>
+        	    {% endfor %}
+                {% elif domanda['type'] == 'open' %}
+                    <div class="form-group">
+                        <input type="text" name="risposta" placeholder="Scrivi la tua risposta qui">
+                    </div>
+                {% endif %}
+
+                <div class="button-group">
+                    {% if q_id > 1 %}
+                        <a href="{{ url_for('domanda', q_id=q_id - 1) }}">
+                            <button type="button">Indietro</button>
+                        </a>
+                    {% endif %}
+                    
+                    <button type="submit" class="confirm">Conferma</button>
+
+                    {% if q_id < total_questions %}
+                        <a href="{{ url_for('domanda', q_id=q_id + 1) }}">
+                            <button type="button">Avanti</button>
+                        </a>
+                    {% endif %}
                 </div>
-            {% elif domanda['type'] == 'open' %}
-                <input type="text" name="answer" placeholder="Inserisci la tua risposta qui" required>
-            {% endif %}
-            <br>
-            <button type="submit">Invia</button>
-        </form>
+            </form>
+        {% else %}
+            <p>Domanda non trovata.</p>
+        {% endif %}
     </div>
 </body>
 </html>

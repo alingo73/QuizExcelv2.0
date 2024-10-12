@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 
 app = Flask(__name__)
+app.secret_key = 'Giorgiolone1!'
 
 # Definizione delle domande del quiz
 quiz = [
@@ -265,7 +266,6 @@ quiz = [
 ]
 
 
-
 # Dizionario per salvare le risposte dell'utente
 user_answers = {}
 
@@ -275,20 +275,46 @@ def home():
 
 @app.route('/domanda/<int:q_id>', methods=['GET', 'POST'])
 def domanda(q_id):
+    total_questions = len(quiz)  # Calcola il numero totale di domande
+    domanda_attuale = next((q for q in quiz if q['id'] == q_id), None)
+    
+    if domanda_attuale is None:
+        return redirect(url_for('risultati'))
+    
+    print(f"Domanda attuale: {domanda_attuale}")  # Aggiungi un debug per vedere la domanda
+    
     if request.method == 'POST':
-        # Recupera la risposta dell'utente
-        answer = request.form.get('answer').strip()
+        # Verifica il tipo di domanda
+        if domanda_attuale['type'] == 'multiple_choice':
+            # Recupera la risposta selezionata dal radio button
+            answer = request.form.get('risposta')
+            if not answer:  # Se non è selezionata alcuna risposta
+                flash('Per favore, seleziona una risposta.')
+                return redirect(url_for('domanda', q_id=q_id))  # Rimanda alla stessa domanda
+        elif domanda_attuale['type'] == 'open':
+            # Recupera la risposta testuale
+            answer = request.form.get('risposta', '').strip()  # Default a stringa vuota
+            if not answer:  # Se la risposta è vuota
+                flash('Per favore, scrivi una risposta.')
+                return redirect(url_for('domanda', q_id=q_id))  # Rimanda alla stessa domanda
+        else:
+            answer = ''
+        
+        # Debug: stampa la risposta dell'utente
+        print(f"Domanda {q_id}: Risposta utente: {answer}")
+        
         # Salva la risposta dell'utente nel dizionario
         user_answers[q_id] = answer
+        
         # Vai alla domanda successiva o ai risultati se è l'ultima domanda
-        return redirect(url_for('domanda', q_id=q_id + 1)) if q_id < len(quiz) else redirect(url_for('risultati'))
+        if q_id < total_questions:
+            return redirect(url_for('domanda', q_id=q_id + 1))
+        else:
+            return redirect(url_for('risultati'))
 
-    domanda_attuale = next((q for q in quiz if q['id'] == q_id), None)
-    if domanda_attuale:
-        # Passa 'enumerate' come variabile
-        return render_template('domanda.html', domanda=domanda_attuale, q_id=q_id, enumerate=enumerate)
-    else:
-        return redirect(url_for('risultati'))
+    # Passa 'total_questions' e 'enumerate' al template
+    return render_template('domanda.html', domanda=domanda_attuale, q_id=q_id, total_questions=total_questions, enumerate=enumerate)
+
 
 
 @app.route('/risultati')
@@ -300,14 +326,19 @@ def risultati():
     for q in quiz:
         risposta_utente = user_answers.get(q['id'], '').strip().lower()
         corretta = False
+        # Debug: stampa la risposta dell'utente e la risposta corretta
+        print(f"Domanda: {q['question']}")
+        print(f"Risposta utente: {risposta_utente}")
 
         if q['type'] == 'multiple_choice':
             corretta = risposta_utente == q['correct'].lower()
             correct_answer = q['correct']
+            print(f"Risposta corretta: {correct_answer}")
         elif q['type'] == 'open':
-            corretta = risposta_utente in [var.lower() for var in q['correct_variants']]
-            correct_answer = ', '.join(q['correct_variants'])
-
+            corretta = any(risposta_utente == var.lower() for var in q['correct_variants'])
+            correct_answer = ', '.join(q['correct_variants'])  # Uniamo le varianti corrette con una virgola
+            print(f"Varianti corrette: {correct_answer}")
+            
         if corretta:
             correct_count += 1
 
@@ -321,6 +352,7 @@ def risultati():
     total_questions = len(quiz)  # Calcola il numero totale delle domande
 
     return render_template('risultati.html', risultati=risultati_quiz, correct_count=correct_count, total_questions=total_questions)
+
 
 
 if __name__ == '__main__':
