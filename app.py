@@ -1,7 +1,26 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, Response, session
 
 app = Flask(__name__)
 app.secret_key = 'Giorgiolone1!'
+
+# Funzione di autenticazione base
+def check_auth(username, password):
+    return username == 'admin' and password == 'password'
+
+# Decoratore per proteggere le rotte con autenticazione
+def authenticate():
+    return Response(
+        'Autenticazione richiesta', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'}
+    )
+
+# Middleware di protezione
+@app.before_request
+def before_request():
+    session.clear()  # Cancella i cookie di sessione
+    auth = request.authorization
+    if not auth or not check_auth(auth.username, auth.password):
+        return authenticate()
 
 # Definizione delle domande del quiz
 quiz = [
@@ -265,46 +284,50 @@ quiz = [
     }
 ]
 
-
 # Dizionario per salvare le risposte dell'utente
 user_answers = {}
 
 @app.route('/')
 def home():
+    return redirect(url_for('inizia_quiz'))  # Reindirizza alla pagina di inizio quiz
+
+
+# Inizializza il quiz e resetta user_answers
+@app.route('/inizia_quiz', methods=['GET', 'POST'])
+def inizia_quiz():
+    global user_answers
+    user_answers = {}  # Reset delle risposte memorizzate
     return redirect(url_for('domanda', q_id=1))
 
 @app.route('/domanda/<int:q_id>', methods=['GET', 'POST'])
 def domanda(q_id):
+    global user_answers
     total_questions = len(quiz)  # Calcola il numero totale di domande
     domanda_attuale = next((q for q in quiz if q['id'] == q_id), None)
     
     if domanda_attuale is None:
         return redirect(url_for('risultati'))
     
-    print(f"Domanda attuale: {domanda_attuale}")  # Aggiungi un debug per vedere la domanda
-    
     if request.method == 'POST':
         # Verifica il tipo di domanda
         if domanda_attuale['type'] == 'multiple_choice':
-            # Recupera la risposta selezionata dal radio button
             answer = request.form.get('risposta')
             if not answer:  # Se non è selezionata alcuna risposta
                 flash('Per favore, seleziona una risposta.')
                 return redirect(url_for('domanda', q_id=q_id))  # Rimanda alla stessa domanda
         elif domanda_attuale['type'] == 'open':
-            # Recupera la risposta testuale
-            answer = request.form.get('risposta', '').strip()  # Default a stringa vuota
+            answer = request.form.get('risposta', '').strip()
             if not answer:  # Se la risposta è vuota
                 flash('Per favore, scrivi una risposta.')
                 return redirect(url_for('domanda', q_id=q_id))  # Rimanda alla stessa domanda
         else:
             answer = ''
         
-        # Debug: stampa la risposta dell'utente
-        print(f"Domanda {q_id}: Risposta utente: {answer}")
-        
         # Salva la risposta dell'utente nel dizionario
-        user_answers[q_id] = answer
+        user_answers[q_id] = {
+            'answer': answer,
+            'freezed': True  # "Freeza" la domanda quando è confermata
+        }
         
         # Vai alla domanda successiva o ai risultati se è l'ultima domanda
         if q_id < total_questions:
@@ -312,48 +335,38 @@ def domanda(q_id):
         else:
             return redirect(url_for('risultati'))
 
-    # Passa 'total_questions' e 'enumerate' al template
-    return render_template('domanda.html', domanda=domanda_attuale, q_id=q_id, total_questions=total_questions, enumerate=enumerate)
-
-
+    # Passa 'user_answers' al template
+    return render_template('domanda.html', domanda=domanda_attuale, q_id=q_id, total_questions=total_questions, user_answers=user_answers)
 
 @app.route('/risultati')
 def risultati():
-    # Confronta le risposte dell'utente con quelle corrette
+    global user_answers
     risultati_quiz = []
     correct_count = 0
 
     for q in quiz:
-        risposta_utente = user_answers.get(q['id'], '').strip().lower()
+        risposta_utente = user_answers.get(q['id'], {}).get('answer', '').strip().lower()
         corretta = False
-        # Debug: stampa la risposta dell'utente e la risposta corretta
-        print(f"Domanda: {q['question']}")
-        print(f"Risposta utente: {risposta_utente}")
 
         if q['type'] == 'multiple_choice':
             corretta = risposta_utente == q['correct'].lower()
             correct_answer = q['correct']
-            print(f"Risposta corretta: {correct_answer}")
         elif q['type'] == 'open':
             corretta = any(risposta_utente == var.lower() for var in q['correct_variants'])
-            correct_answer = ', '.join(q['correct_variants'])  # Uniamo le varianti corrette con una virgola
-            print(f"Varianti corrette: {correct_answer}")
+            correct_answer = ', '.join(q['correct_variants'])
             
         if corretta:
             correct_count += 1
 
         risultati_quiz.append({
             'question': q['question'],
-            'user_answer': user_answers.get(q['id'], ''),
+            'user_answer': user_answers.get(q['id'], {}).get('answer', ''),
             'correct_answer': correct_answer,
             'is_correct': corretta
         })
 
-    total_questions = len(quiz)  # Calcola il numero totale delle domande
-
+    total_questions = len(quiz)
     return render_template('risultati.html', risultati=risultati_quiz, correct_count=correct_count, total_questions=total_questions)
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)

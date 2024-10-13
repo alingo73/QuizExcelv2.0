@@ -94,44 +94,44 @@ input[type="text"] {
     text-align: center; /* Centra il testo all'interno della casella */
 }
 
-/* Stile per i pulsanti */
+/* Stili generali */
 button {
     padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
     border: none;
-    border-radius: 5px;
+    color: white;
+    background-color: #007BFF; /* Blu per Avanti e Indietro */
+    font-size: 16px;
     cursor: pointer;
-    margin-top: 20px;
-    font-size: 1.1em;
+    border-radius: 5px;
+    margin: 10px;
 }
 
 button:hover {
-    background-color: #45a049;
+    opacity: 0.9;
 }
 
-/* Pulsante conferma */
-.confirm {
-    background-color: #007bff;
+/* Pulsante Indietro */
+button.indietro {
+    background-color: #007BFF; /* Blu */
 }
 
-.confirm:hover {
-    background-color: #0056b3;
+/* Pulsante Avanti */
+button.avanti {
+    background-color: #007BFF; /* Blu */
 }
 
-/* Pulsante avanti e indietro */
-.button-group {
-    margin-top: 20px;
-    text-align: center;
+/* Pulsante Conferma */
+button.conferma {
+    background-color: #28A745; /* Verde per Conferma */
 }
 
-.button-group a {
-    text-decoration: none;
+button.conferma:hover {
+    background-color: #218838; /* Verde scuro su hover */
 }
 
-.button-group button {
-    margin: 0 10px; /* Spazio tra i pulsanti */
-    font-size: 1.1em;
+/* Pulsante Termina (al termine del quiz) */
+button.termina {
+    background-color: #DC3545; /* Rosso per Termina */
 }
 
 /* Contenitore per i risultati */
