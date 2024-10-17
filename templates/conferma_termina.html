@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conferma Termine Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Attenzione!</h1>
+        <p>Hai ancora {{ unanswered_count }} domande non risposte.</p>
+        <p>Sei sicuro di voler terminare il quiz?</p>
+        
+        <form method="POST" action="{{ url_for('conferma_termina_quiz') }}">
+            <div class="button-group">
+                <button type="submit" class="conferma">Sì, termina quiz</button>
+                <a href="{{ url_for('domanda', q_id=1) }}">
+                    <button type="button" class="annulla">Annulla</button>
+                </a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

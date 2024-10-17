@@ -338,11 +338,41 @@ def domanda(q_id):
     # Passa 'user_answers' al template
     return render_template('domanda.html', domanda=domanda_attuale, q_id=q_id, total_questions=total_questions, user_answers=user_answers)
 
+@app.route('/termina', methods=['POST'])
+def termina_quiz():
+    global user_answers
+    unanswered_count = 0
+    # Conta le domande non risposte
+    for q in quiz:
+        risposta_utente = user_answers.get(q['id'], {}).get('answer', '').strip().lower()
+        if not risposta_utente:
+            unanswered_count += 1
+    
+    # Se ci sono domande non risposte, mostra il messaggio di avviso
+    if unanswered_count > 0:
+        return render_template('conferma_termina.html', unanswered_count=unanswered_count)
+    
+    # Se tutte le domande sono state risposte, vai ai risultati
+    return redirect(url_for('risultati'))
+
+
+@app.route('/conferma_termina', methods=['POST'])
+def conferma_termina_quiz():
+    global user_answers
+    # Aggiungi "nessuna risposta" alle domande non risposte
+    for q in quiz:
+        if not user_answers.get(q['id'], {}).get('answer'):
+            user_answers[q['id']] = {'answer': 'nessuna risposta'}
+    
+    return redirect(url_for('risultati'))
+
+
 @app.route('/risultati')
 def risultati():
     global user_answers
     risultati_quiz = []
     correct_count = 0
+    unanswered_count = 0
 
     for q in quiz:
         risposta_utente = user_answers.get(q['id'], {}).get('answer', '').strip().lower()
@@ -355,6 +385,9 @@ def risultati():
             corretta = any(risposta_utente == var.lower() for var in q['correct_variants'])
             correct_answer = ', '.join(q['correct_variants'])
             
+        if not risposta_utente:  # Conta le domande senza risposta
+            unanswered_count += 1
+
         if corretta:
             correct_count += 1
 
@@ -366,7 +399,9 @@ def risultati():
         })
 
     total_questions = len(quiz)
-    return render_template('risultati.html', risultati=risultati_quiz, correct_count=correct_count, total_questions=total_questions)
+    
+    return render_template('risultati.html', risultati=risultati_quiz, correct_count=correct_count, total_questions=total_questions, unanswered_count=unanswered_count)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

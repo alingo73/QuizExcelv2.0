@@ -10,7 +10,14 @@
     <div class="container">
         {% if domanda %}
             <h1>{{ domanda['question'] }}</h1>
-
+            
+            <!-- Aggiunta dell'immagine se presente -->
+            {% if domanda['image'] %}
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename=domanda['image']) }}" alt="Immagine domanda">
+                </div>
+            {% endif %}
+            
             <form method="POST">
                 {% if domanda['type'] == 'multiple_choice' %}
                     {% for option in domanda['options'] %}
@@ -19,7 +26,7 @@
                                {% if user_answers[q_id] and user_answers[q_id]['freezed'] %}disabled{% endif %}>
                         <label for="{{ loop.index }}">{{ option }}</label><br>
                     {% endfor %}
-                {% elif domanda['type'] == 'open' %}
+                {% elif domanda['type'] == 'open' %} 
                     <div class="form-group">
                         <input type="text" name="risposta" placeholder="Scrivi la tua risposta qui"
                                value="{{ user_answers[q_id]['answer'] if user_answers[q_id] else '' }}"
@@ -40,11 +47,14 @@
                         <a href="{{ url_for('domanda', q_id=q_id + 1) }}">
                             <button type="button" class="avanti">Avanti</button>
                         </a>
-                    {% else %}
-                        <a href="{{ url_for('risultati') }}">
-                            <button type="button" class="termina">Termina</button>
-                        </a>
                     {% endif %}
+                </div>
+            </form>
+            
+            <!-- Pulsante per terminare il quiz -->
+            <form method="POST" action="{{ url_for('termina_quiz') }}">
+                <div class="termina-container">
+                    <button type="submit" class="termina" style="background-color: red; color: white;">Termina Quiz</button>
                 </div>
             </form>
         {% else %}
